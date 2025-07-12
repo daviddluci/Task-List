@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Buy milk",
+    "description": "do not forget to buy some milk for pancake baking",
+    "done": false
+  },
+  {
+    "title": "Buy eggs",
+    "description": "for the omelet",
+    "done": false
+  },
+  {
+    "title": "Learn",
+    "description": "prepare for tomorrows biology exam",
+    "done": false
+  },
+  {
+    "title": "Workout",
+    "description": "your daily workout",
+    "done": false
+  },
+  {
+    "title": "Buy eggs",
+    "description": "for the pancakes",
+    "done": false
+  }
+]
