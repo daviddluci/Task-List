@@ -11,5 +11,4 @@ class Task
   def print
     puts @title + " | " + @description + " | " + @done.to_s
   end
-
 end
