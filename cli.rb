@@ -1,3 +1,5 @@
+require_relative 'lib/task_list'
+require_relative 'lib/task'
 require 'tty-prompt'
 require 'json'
 
@@ -30,11 +32,11 @@ class ConsoleBasedUI
 
   def local_mode
     loop do
-      choice = @prompt.select("\nIn which mode would you like to start?\n", ["View Tasks Of Previous Days", "Remote Database Mode", "Exit"])
+      choice = @prompt.select("\nWhat would you like to do?\n", ["View Tasks Of Previous Days", "Create new Task List", "Exit"])
 
       case choice
-      when "View Tasks Of Previous Days"
-        puts "\nEnter the date for the task list in the format of: YYYY-MM-DD.json\n"
+      when "View Task List Of Previous Day"
+        puts "\nEnter the date for the Task List in the format of: YYYY-MM-DD.json\n"
         file = gets.chomp()
         file = "local_data/" + file
 
@@ -47,12 +49,40 @@ class ConsoleBasedUI
             puts "Invalid JSON format: #{e.message}"
           end
         else
-          puts "false"
+          puts "\n\nError: No file found with name - " + file
         end
-        
-        break
-      when 'Remote Database Mode'
-        puts "looped"
+
+        puts "\n\n\n"
+
+      when "Create new Task List"
+        list = TaskList.new()
+        loop do
+          
+          taskChoice = @prompt.select("\nWhat would you like to do?\n", ["View Tasks", "Add new task", "Mark Task Done", "Delete Task", "Exit"])
+
+          case taskChoice
+          when "View Tasks"
+            clear_console()
+            list.print()
+          when "Add new task"
+            clear_console()
+            title = @prompt.ask("Enter task title: ")
+            description = @prompt.ask("Enter task description: ")
+            list.add(Task.new(title, description))
+          when "Mark Task Done"
+            clear_console()
+            list.print()
+            id = @prompt.ask("\nWhich task? ", convert: :int)
+            list.mark_done(id)
+          when "Delete Task"
+            clear_console()
+            list.print()
+            id = @prompt.ask("\nWhich task? ", convert: :int)
+            list.delete(id)
+          when "Exit"
+            break
+          end
+        end
       end
     end
   end
