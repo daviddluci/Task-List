@@ -1,8 +1,12 @@
 require_relative 'lib/task_list'
 require_relative 'lib/task'
+require_relative 'db/mongo_client'
 require 'tty-prompt'
 require 'json'
 require 'date'
+require 'mongo'
+require 'dotenv/load'
+require 'colorize'
 
 class ConsoleBasedUI
   attr_accessor :prompt, :mode
@@ -87,10 +91,63 @@ class ConsoleBasedUI
       end
     end
   end
+#mongodb+srv://daviddluci:123@cluster0.mmrmrcb.mongodb.net/Tasks?retryWrites=true&w=majority&appName=Cluster0
+  def remote_mode
+    uriProvided = @prompt.select("\nDid you specify your db uri in .env ?", ["Yes", "No"])
+    uri = ""
+    case uriProvided
+    when "No"
+      uri = @prompt.ask("Enter the uri for the db: ", required: true)
+      client = MongoConnector.client(uri)
+      if client.nil?
+        return
+      end
+    when "Yes"
+      puts "\nConnecting to MongoDB....".yellow()
+      client = MongoConnector.client()
+    end
+
+    db = client.database
+    collection = db[:task_list]
+
+    loop do
+      choice = @prompt.select("\nWhat would you like to do?\n", ["View Contents of Remote Database (MongoDB)", "Add new task", "Mark Task Done", "Delete Task", "Exit"])
+
+      case choice
+      when "View Contents of Remote Database (MongoDB)"
+        collection.find.each do |document|
+          puts document
+        end
+      when "Add new task"
+        title = @prompt.ask("Title: ", required: true)
+        description = @prompt.ask("Description: ", required: true)
+        collection.insert_one({ title: title, description: description, done: false})
+      when "Mark Task Done"
+        title = @prompt.ask("Title: ", required: true)
+        result = collection.find_one_and_update({ title: title }, { '$set' => { done: true } })
+        if result
+          puts "Task marked as done.".green
+        else
+          puts "No task found with title '#{title}'.".red
+        end
+      when "Delete Task"
+        title = @prompt.ask("Title: ", required: true)
+        result = collection.delete_one({ title: title })
+
+        if result.deleted_count > 0
+          puts "Task '#{title}' deleted successfully.".green
+        else
+          puts "No task found with title '#{title}'.".red
+        end
+      when "Exit"
+        break
+      end
+    end
+  end
 
   def start
     select_mode()
-    puts @mode == "local" ? local_mode() : "a" 
+    @mode == "local" ? local_mode() : remote_mode() 
   end
 
   def write_file(list)
