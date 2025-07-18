@@ -2,6 +2,7 @@ require_relative 'lib/task_list'
 require_relative 'lib/task'
 require 'tty-prompt'
 require 'json'
+require 'date'
 
 class ConsoleBasedUI
   attr_accessor :prompt, :mode
@@ -35,9 +36,8 @@ class ConsoleBasedUI
       choice = @prompt.select("\nWhat would you like to do?\n", ["View Tasks Of Previous Days", "Create new Task List", "Exit"])
 
       case choice
-      when "View Task List Of Previous Day"
-        puts "\nEnter the date for the Task List in the format of: YYYY-MM-DD.json\n"
-        file = gets.chomp()
+      when "View Tasks Of Previous Days"
+        file = @prompt.ask("\nEnter the date for the Task List in the format of: YYYY-MM-DD.json\n ", required: true)
         file = "local_data/" + file
 
         if File.exist?(file)
@@ -58,7 +58,7 @@ class ConsoleBasedUI
         list = TaskList.new()
         loop do
           
-          taskChoice = @prompt.select("\nWhat would you like to do?\n", ["View Tasks", "Add new task", "Mark Task Done", "Delete Task", "Exit"])
+          taskChoice = @prompt.select("\nWhat would you like to do?\n", ["View Tasks", "Add new task", "Mark Task Done", "Delete Task", "Exit (Save)"])
 
           case taskChoice
           when "View Tasks"
@@ -66,8 +66,8 @@ class ConsoleBasedUI
             list.print()
           when "Add new task"
             clear_console()
-            title = @prompt.ask("Enter task title: ")
-            description = @prompt.ask("Enter task description: ")
+            title = @prompt.ask("Enter task title: ", required: true)
+            description = @prompt.ask("Enter task description: ", required: true)
             list.add(Task.new(title, description))
           when "Mark Task Done"
             clear_console()
@@ -79,7 +79,8 @@ class ConsoleBasedUI
             list.print()
             id = @prompt.ask("\nWhich task? ", convert: :int)
             list.delete(id)
-          when "Exit"
+          when "Exit (Save)"
+            write_file(list)
             break
           end
         end
@@ -90,6 +91,14 @@ class ConsoleBasedUI
   def start
     select_mode()
     puts @mode == "local" ? local_mode() : "a" 
+  end
+
+  def write_file(list)
+    hashed_list = list.to_hash()
+
+    File.open("local_data/#{DateTime.now().strftime("%Y-%m-%d")}.json", "w") do |file|
+      file.write(JSON.pretty_generate(hashed_list))
+    end
   end
 
 end
