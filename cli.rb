@@ -169,7 +169,3 @@ class ConsoleBasedUI
     end
   end
 end
-
-# Start the UI
-ui = ConsoleBasedUI.new
-ui.start

@@ -2,7 +2,6 @@ class Task
   attr_accessor :title, :description, :done
 
   def initialize(title = "No title", description = "No description", done = false)
-    puts "new task created."
     @title = title
     @description = description
     @done = done

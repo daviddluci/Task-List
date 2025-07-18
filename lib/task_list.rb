@@ -17,9 +17,9 @@ class TaskList
     end
   end
 
-  def print
+  def print()
     @tasks.length.times do |i|
-      puts "#" + i.to_s + ": " + @tasks[i].title + " | Done?: " + @tasks[i].done.to_s 
+      puts "#" + (i + 1).to_s + ": " + @tasks[i].title + " | Done?: " + @tasks[i].done.to_s 
     end
   end
 
