@@ -63,7 +63,7 @@ bundle install
 
 3. **Edit the .env file (Optional, only for MongoDB use)**
 
-.env file should hold a variable in format like this:
+`.env` file should hold a variable in format like this:
 
 ```bash
 db_uri=mongodb+srv://your_username:your_password@your_cluster_name.mongodb.net/collection_name?retryWrites=true&w=majority
@@ -94,10 +94,10 @@ Choose the mode and follow the instructions!
 
 - Task lists are saved as JSON files inside the /local_data directory.
 
-- File name format: YYYY-MM-DD.json
+- File name format: `YYYY-MM-DD.json`
 
 ## 🌐 Remote MongoDB Usage
-- Tasks are stored in the task_list collection of the specified MongoDB database.
+- Tasks are stored in the `task_list` collection of the specified MongoDB database.
 
 - You can add, view, update, and delete tasks using interactive prompts.
 
