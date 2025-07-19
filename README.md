@@ -92,7 +92,7 @@ Choose the mode and follow the instructions!
 
 ## 📂 Local Data Storage
 
-- Task lists are saved as JSON files inside the /local_data directory.
+- Task lists are saved as JSON files inside the `/local_data` directory.
 
 - File name format: `YYYY-MM-DD.json`
 
